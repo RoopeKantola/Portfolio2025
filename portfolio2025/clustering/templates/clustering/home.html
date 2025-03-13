@@ -1,0 +1,29 @@
+{% extends "main/base.html" %}
+
+
+{% block content %}
+<p id="red">This is from the home.html file</p>
+<p class="text-primary">This is the blue text</p>
+
+    <div class="row">
+        {% for n in projects %}
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                  <p>{{n.name}}</p>
+                <div class="card-body">
+                  <p class="card-text">{{n.description}}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary"><a href={{n.id}}>Select</a></button>
+                    </div>
+                    <small class="text-muted">example text</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        {% endfor %}
+
+        </div>
+      </div>
+{% endblock %}
