@@ -8,14 +8,32 @@ from sklearn.preprocessing import StandardScaler
 
 
 def draw_graph():
-    df = pd.DataFrame(np.random.randint(0, 100, size=(100, 2)), columns=["a", "b"])
+    row = np.arange(1, 101)
+    a = np.linspace(1, 100001, num=100)
+    b = np.arange(100, 0, -1)
 
-    fig = px.scatter(x=df["a"], y=df["b"])
+    data = np.stack((row ,a, b), axis=-1)
 
-    fig = fig.to_html()
+    df = pd.DataFrame(data, columns=["row_id", "a", "b"])
+
+    print(df)
+
+    fig = px.scatter(data_frame=df, x=df["a"], y=df["b"], animation_frame="row_id",
+                     range_x=[1, 100000], range_y=[0, 100],
+                     )
+
+    fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 30
+    fig.layout.updatemenus[0].buttons[0].args[1]['transition']['duration'] = 5
+
+
+    #fig.show()
+
+    fig = fig.to_html(auto_play=False)
+
 
     return fig
 
 
+
 if __name__ == "__main__":
-    pass
+    draw_graph()
