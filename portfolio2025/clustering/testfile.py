@@ -12,16 +12,9 @@ def draw_graph():
 
     fig = px.scatter(x=df["a"], y=df["b"])
 
-    output_html_path=r"/graph.html"
-    input_template_path = r"/clustering/index.html"
+    fig = fig.to_html()
 
-    plotly_jinja_data = {"fig":fig.to_html(full_html=False)}
-    #consider also defining the include_plotlyjs parameter to point to an external Plotly.js as described above
-
-    with open(output_html_path, "w", encoding="utf-8") as output_file:
-        with open(input_template_path) as template_file:
-            j2_template = Template(template_file.read())
-            output_file.write(j2_template.render(plotly_jinja_data))
+    return fig
 
 
 if __name__ == "__main__":
