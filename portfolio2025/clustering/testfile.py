@@ -22,7 +22,7 @@ def draw_graph():
                      range_x=[1, 100000], range_y=[0, 100],
                      )
 
-    fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 30
+    fig.layout.updatemenus[0].buttons[0].args[1]['frame']['duration'] = 60
     fig.layout.updatemenus[0].buttons[0].args[1]['transition']['duration'] = 5
 
 
