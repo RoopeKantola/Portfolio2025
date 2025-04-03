@@ -26,7 +26,7 @@ def draw_graph():
     fig.layout.updatemenus[0].buttons[0].args[1]['transition']['duration'] = 5
 
 
-    #fig.show()
+    fig.show()
 
     fig = fig.to_html(auto_play=False)
 
