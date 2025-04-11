@@ -16,7 +16,8 @@ random.seed(1)
 
 
 def kMeans(dataframe, no_of_clusters):
-    # print(dataframe.head())
+    frames = []
+    frame = []
 
     data = dataframe.iloc[:, 0:4]
     labels = dataframe.iloc[:, -1]
@@ -30,64 +31,16 @@ def kMeans(dataframe, no_of_clusters):
 
     transformed_data["labels"] = labels
 
-    points = list(transformed_data[["PC1", "PC2"]].itertuples(index=False, name=None))
-
-    min_x = min(transformed_data["PC1"])
-    max_x = max(transformed_data["PC1"])
-    min_y = min(transformed_data["PC2"])
-    max_y = max(transformed_data["PC2"])
-
-    centers = []
-    for i in range(no_of_clusters):
-        center = (random.uniform(min_x, max_x), random.uniform(min_y, max_y))
-        centers.append(center)
-
-    centers = pd.DataFrame(centers, columns=["x", "y"])
-    # print(centers)
-
-    # print(transformed_data[transformed_data["labels"] == "Iris-setosa"]["PC1"].values)
-    # print(transformed_data[transformed_data["labels"] == "Iris-setosa"]["PC2"].values)
-
-    xs_setosa = transformed_data[transformed_data["labels"] == "Iris-setosa"]["PC1"].values
-    ys_setosa = transformed_data[transformed_data["labels"] == "Iris-setosa"]["PC2"].values
-    xs_versicolor = transformed_data[transformed_data["labels"] == "Iris-versicolor"]["PC1"].values
-    ys_versicolor = transformed_data[transformed_data["labels"] == "Iris-versicolor"]["PC2"].values
-    xs_virginica = transformed_data[transformed_data["labels"] == "Iris-virginica"]["PC1"].values
-    ys_virginica = transformed_data[transformed_data["labels"] == "Iris-virginica"]["PC2"].values
+    centers = calculate_centers(transformed_data, first_assignment=True, no_of_clusters=3)
 
     distance_matrix = calculate_distances(transformed_data, centers)
     transformed_data = assign_centers(transformed_data, distance_matrix)
 
-    '''
-    
-    plt.add_trace(go.Scatter(
-        x=transformed_data[transformed_data["labels"] == "Iris-setosa"]["PC1"].values,
-        y=transformed_data[transformed_data["labels"] == "Iris-setosa"]["PC2"].values,
-        name="data_setosa",
-        mode="markers",
-        marker=dict(size=10, symbol="square", color="black")))
+    frame.append(transformed_data)
+    frame.append(centers)
 
-    plt.add_trace(go.Scatter(
-        x=xs_versicolor,
-        y=ys_versicolor,
-        name="data_versicolor",
-        mode="markers",
-        marker=dict(size=10, symbol="star", color="black")))
+    print(frame)
 
-    plt.add_trace(go.Scatter(
-        x=xs_virginica,
-        y=ys_virginica,
-        name="data_virginica",
-        mode="markers",
-        marker=dict(size=10, symbol="circle", color="black")))
-    plt.add_trace(go.Scatter(
-        x=centers["x"],
-        y=centers["y"],
-        name="centers",
-        mode="markers",
-        marker=dict(size=15, symbol="cross", line=dict(color="cyan", width=2))))
-    '''
-    print(transformed_data)
     fig = go.Figure()
     fig_2 = px.scatter(transformed_data, x="PC1", y="PC2", color="center", symbol="labels",
                        symbol_sequence=["star", "circle", "diamond"])
@@ -108,7 +61,32 @@ def kMeans(dataframe, no_of_clusters):
 
     fig.show()
 
+    calculate_centers(data=transformed_data, first_assignment=False, no_of_clusters=3)
+
     return True
+
+
+def calculate_centers(data, first_assignment=False, no_of_clusters=2):
+    min_x = min(data["PC1"])
+    max_x = max(data["PC1"])
+    min_y = min(data["PC2"])
+    max_y = max(data["PC2"])
+
+    centers = []
+    if first_assignment:
+        for i in range(no_of_clusters):
+            center = (random.uniform(min_x, max_x), random.uniform(min_y, max_y))
+            centers.append(center)
+    else:
+        for i, center in enumerate(pd.Series.unique(data["center"])):
+            print(center)
+            means = data[data["center"] == center].mean(numeric_only=True)
+            print(means)
+            print(means.to_numpy())
+
+    centers = pd.DataFrame(centers, columns=["x", "y"])
+
+    return centers
 
 
 def euclidean_distance(point1, point2):
