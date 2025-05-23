@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from main.models import Project
-from .testfile import draw_graph
+from .algorithms.kMeans import kMeans
 
 
 # Create your views here.
@@ -17,7 +17,7 @@ def home(response):
 
 def index(response, id):
     project = Project.objects.get(id=id)
-    graph = draw_graph()
+    graph = kMeans(7)
     print(project)
 
     context = {

@@ -2,7 +2,7 @@
 {% extends "main/base.html"%}
 
 {% block content %}
-    {% for n in user.project.all %}
-        <p>{n.name}</p>
+    {% for n in projects %}
+        <p>{{n.name}}</p>
     {% endfor %}
 {% endblock %}

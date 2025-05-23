@@ -5,22 +5,19 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from plotly import graph_objects as go
-from plotly.validators.scatter.marker import SymbolValidator
-from jinja2 import Template
 from sklearn.datasets import make_blobs
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-import alphashape
-import shapely
+
 
 random.seed(1)
 
 
-def kMeans(dataframe, no_of_clusters):
+def kMeans(no_of_clusters):
     go_frames = []
 
-    data = dataframe.iloc[:, 0:4]
-    labels = dataframe.iloc[:, -1]
+    #data = dataframe.iloc[:, 0:4]
+    #labels = dataframe.iloc[:, -1]
 
     random_cluster_centers = []
     for i in range(no_of_clusters):
@@ -112,7 +109,7 @@ def kMeans(dataframe, no_of_clusters):
         previous_centers = pd.DataFrame.copy(centers)
         centers = calculate_centers(data=transformed_data, first_assignment=False,
                                     no_of_clusters=no_of_clusters, centers=centers.to_numpy())
-        #print("CEENTERRS", centers)
+
         distance_matrix = calculate_distances(transformed_data, centers)
         transformed_data = assign_centers(transformed_data, distance_matrix)
 
@@ -162,13 +159,17 @@ def kMeans(dataframe, no_of_clusters):
         updatemenus=updatemenus,
     )
 
-    fig.show()
+    #fig.show()
+
+    fig = fig.to_html(auto_play=False)
+
+
 
     datafile = open("datafile.txt", "w")
     datafile.write(transformed_data.to_csv())
     datafile.close()
 
-    return True
+    return fig
 
 
 def calculate_centers(data, first_assignment=False, no_of_clusters=2, centers=np.array([])):
@@ -232,6 +233,6 @@ def assign_centers(dataframe, distance_matrix):
 
 
 if __name__ == "__main__":
-    dataframe = pd.read_csv("../../datasets/iris/iris.data")
+    #dataframe = pd.read_csv("../../datasets/iris/iris.data")
 
-    kMeans(dataframe, 3)
+    kMeans(3)
