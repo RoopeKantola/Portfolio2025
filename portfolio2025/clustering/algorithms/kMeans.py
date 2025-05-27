@@ -10,7 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 
-random.seed(1)
+random.seed(2)
 
 
 def kMeans(no_of_clusters):
