@@ -3,236 +3,190 @@ import random
 
 import pandas as pd
 import numpy as np
-import plotly.express as px
-from plotly import graph_objects as go
+from matplotlib import pyplot as plt
+from matplotlib import animation as ani
+
 from sklearn.datasets import make_blobs
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+plt.rcParams['axes.titlesize'] = 'medium'
 
-random.seed(2)
+random.seed(12)
 
 
-def kMeans(no_of_clusters):
-    go_frames = []
+class kMeans:
+    def __init__(self, axis_limit, no_of_clusters, no_of_points):
+        self.axis_limit = axis_limit
+        self.no_of_clusters = no_of_clusters
+        self.no_of_points = no_of_points
+        self.iter = 0
 
-    #data = dataframe.iloc[:, 0:4]
-    #labels = dataframe.iloc[:, -1]
+    def kMeans_compute(self):
 
-    random_cluster_centers = []
-    for i in range(no_of_clusters):
-        random_cluster_centers.append([random.uniform(-10, 10), random.uniform(-10, 10)])
+        random_cluster_centers = []
+        for i in range(self.no_of_clusters):
+            random_cluster_centers.append(
+                [random.uniform(-self.axis_limit, self.axis_limit), random.uniform(-self.axis_limit, self.axis_limit)])
 
-    print(random_cluster_centers)
+        random_cluster_std = []
+        random_std = random.uniform(0.5, 5)
+        for i in range(self.no_of_clusters):
+            random_cluster_std.append(random_std)
 
-    random_cluster_std = []
-    random_std = random.uniform(0.8, 2.5)
-    for i in range(no_of_clusters):
-        random_cluster_std.append(random_std)
+        X, y = make_blobs(n_samples=self.no_of_points, cluster_std=random_cluster_std,
+                          centers=random_cluster_centers, n_features=2, random_state=1)
 
+        data = pd.DataFrame(X, columns=["x", "y"])
 
+        y = y.tolist()
+        for i, center in enumerate(y):
+            y[i] = "center" + str(center)
 
-    X, y = make_blobs(n_samples=300, cluster_std=random_cluster_std,
-                      centers=random_cluster_centers, n_features=2, random_state=1)
+        labels = pd.Series(y)
 
-    data = pd.DataFrame(X, columns=["x", "y"])
-    y = y.tolist()
-    for i, center in enumerate(y):
-        y[i] = "center" + str(center)
+        ss = StandardScaler()
+        normalized_data = ss.fit_transform(data)
 
-    #print(y)
+        pca = PCA(n_components=2)
+        transformed_data = pca.fit_transform(normalized_data)
+        transformed_data = pd.DataFrame(transformed_data, columns=["PC1", "PC2"])
 
-    labels = pd.Series(y)
+        transformed_data["labels"] = labels
 
-    ss = StandardScaler()
-    normalized_data = ss.fit_transform(data)
+        centers = self.calculate_centers(transformed_data, first_assignment=True, no_of_clusters=self.no_of_clusters)
 
-    pca = PCA(n_components=2)
-    transformed_data = pca.fit_transform(normalized_data)
-    transformed_data = pd.DataFrame(transformed_data, columns=["PC1", "PC2"])
+        distance_matrix = self.calculate_distances(transformed_data, centers)
+        transformed_data = self.assign_centers(transformed_data, distance_matrix)
 
-    transformed_data["labels"] = labels
+        previous_centers = pd.DataFrame(columns=["x", "y"], index=[i for i in range(self.no_of_clusters)])
 
-    centers = calculate_centers(transformed_data, first_assignment=True, no_of_clusters=no_of_clusters)
+        max_iter = 30
 
-    distance_matrix = calculate_distances(transformed_data, centers)
-    transformed_data = assign_centers(transformed_data, distance_matrix)
+        points_file = open("../static/data/points_file.txt", "w")
+        points_file.write(transformed_data.to_csv())
+        points_file.close()
+        points_file = open("../static/data/points_file.txt", "a")
 
-    previous_centers = pd.DataFrame(columns=["x", "y"], index=[i for i in range(no_of_clusters)])
+        centers_file = open("../static/data/centers_file.txt", "w")
+        centers_file.write(centers.to_csv())
+        centers_file.close()
+        centers_file = open("../static/data/centers_file.txt", "a")
 
-    # Adding a list of symbols and colors for use
-    symbols = ["diamond", "circle", "star", "triangle-up", "hexagon", "octagon", "square", "hexagram",
-               "star-square", "star-diamond", "hourglass", "bowtie", "circle-x", "square-x", "x-thin"]
+        while not np.array_equal(centers.to_numpy(), previous_centers.to_numpy()) and self.iter < max_iter:
+            self.iter += 1
+            print("iter:", self.iter)
+            previous_centers = pd.DataFrame.copy(centers)
+            centers = self.calculate_centers(data=transformed_data, first_assignment=False,
+                                             no_of_clusters=self.no_of_clusters, centers=centers.to_numpy())
 
-    colors = ["red", "blue", "orange", "magenta", "cyan", "maroon", "palegreen",
-              "coral", "deeppink", "crimson", "lightblue",
-              "orchid", "violet", "yellow", "skyblue", "mintcream"]
+            distance_matrix = self.calculate_distances(transformed_data, centers)
+            transformed_data = self.assign_centers(transformed_data, distance_matrix)
 
-    keys = pd.Series.unique(transformed_data["labels"])
-    label_to_symbol_dict = {keys[i]: symbols[i] for i in range(len(keys))}
-    keys = pd.Series.unique(transformed_data["center"])
-    center_to_color_dict = {keys[i]: colors[i] for i in range(len(keys))}
+            points_file.write(transformed_data.to_csv(header=False))
+            centers_file.write(centers.to_csv(header=False))
 
-    fig = go.Figure()
+        centers_file.close()
 
-    plots = [go.Scatter(x=transformed_data['PC1'],
-                        y=transformed_data['PC2'],
-                        mode='markers',
-                        marker_color=transformed_data["center"].map(center_to_color_dict),
-                        marker_symbol=transformed_data["labels"].map(label_to_symbol_dict),
+    def animate_kMeans(self):
 
-                        ),
-             ]
+        point_index = 0
+        center_index = 0
 
-    fig.update_xaxes(constrain="domain")
-    fig.update_yaxes(scaleanchor="x")
+        points = pd.read_csv("../static/data/points_file.txt", index_col=0)
+        centers = pd.read_csv("../static/data/centers_file.txt", index_col=0)
 
-    # Add centers to plot
-    center_plot = go.Scatter(
-        x=centers["x"],
-        y=centers["y"],
-        name="centers",
-        mode="markers",
-        marker=dict(size=15, color="black", symbol="cross", line=dict(color="gray", width=2)))
-    fig.add_trace(center_plot)
+        limit = max([max([max(points["PC1"]),abs(min(points["PC1"]))]),
+                       max([max(points["PC2"]), abs(min(points["PC2"]))]),
+                       max([max(centers["x"]), abs(min(centers["x"]))]),
+                       max([max(centers["y"]), abs(min(centers["y"]))])])
 
-    for plot in plots:
-        fig.add_trace(plot)
+        no_of_frames = int(len(centers)/self.no_of_clusters)
 
-    go_frames.append(go.Frame(data=[center_plot] + plots))
-    max_iter = 20
-    iter = 0
+        colors = {'center0': 'tab:blue', 'center1': 'tab:orange', 'center2': 'tab:green', 'center3': 'tab:red',
+                  'center4': 'tab:purple', 'center5': 'tab:brown', 'center6': 'tab:pink', 'center7': 'tab:gray',
+                  'center8': 'tab:olive', 'center9': 'tab:cyan'}
+        figure, axis = plt.subplots()
 
-    while not np.array_equal(centers.to_numpy(), previous_centers.to_numpy()) and iter < max_iter:
-        iter += 1
-        print("iter:", iter)
-        previous_centers = pd.DataFrame.copy(centers)
-        centers = calculate_centers(data=transformed_data, first_assignment=False,
-                                    no_of_clusters=no_of_clusters, centers=centers.to_numpy())
-
-        distance_matrix = calculate_distances(transformed_data, centers)
-        transformed_data = assign_centers(transformed_data, distance_matrix)
-
-        plots = [go.Scatter(x=transformed_data['PC1'],
-                            y=transformed_data['PC2'],
-                            mode='markers',
-                            marker_color=transformed_data["center"].map(center_to_color_dict),
-                            marker_symbol=transformed_data["labels"].map(label_to_symbol_dict),
-
-                            )]
-
-        go_frames.append(go.Frame(data=[go.Scatter(
-            x=centers["x"],
-            y=centers["y"],
-            name="centers",
-            mode="markers",
-            marker=dict(size=15, color="black", symbol="cross", line=dict(color="gray", width=2)))] + plots))
-
-    fig.update(frames=go_frames)
-
-    updatemenus = [dict(
-        buttons=[
-            dict(
-                args=[None, {"frame": {"duration": 500, "redraw": True},
-                             "fromcurrent": True, "transition": {"duration": 800}}],
-                label="Play",
-
-                method="animate"
-            ),
-
-        ],
-        direction="left",
-        pad={"r": 10, "t": 87},
-        showactive=False,
-        type="buttons",
-        x=0.1,
-        xanchor="right",
-        y=0,
-        yanchor="top"
-    )]
-
-    fig.update_layout(
-        title_text="Kmeans clustering",
-        title_x=0.5,
-        width=840,
-        height=680,
-        updatemenus=updatemenus,
-    )
-
-    #fig.show()
-
-    fig = fig.to_html(auto_play=False)
-
-
-
-    datafile = open("datafile.txt", "w")
-    datafile.write(transformed_data.to_csv())
-    datafile.close()
-
-    return fig
-
-
-def calculate_centers(data, first_assignment=False, no_of_clusters=2, centers=np.array([])):
-    min_x = min(data["PC1"])
-    max_x = max(data["PC1"])
-    min_y = min(data["PC2"])
-    max_y = max(data["PC2"])
-
-    new_centers = []
-    if first_assignment:
-        for i in range(no_of_clusters):
-            #print("i:", i)
-            center = (random.uniform(min_x, max_x), random.uniform(min_y, max_y))
-            new_centers.append(center)
-    else:
-        for i, _ in enumerate(centers):
-
-            center = f"center{i}"
-
-            means = data[data["center"] == center].mean(numeric_only=True)
-
-            if not np.isnan(means.to_numpy()).any():
-                new_centers.append(means.to_numpy())
-            else:
-                new_centers.append(centers[i])
-
-    new_centers = pd.DataFrame(new_centers, columns=["x", "y"])
-    #print("centers:", new_centers)
-
-    return new_centers
-
-
-def euclidean_distance(point1, point2):
-    sum = 0
-    for dimension, _ in enumerate(point1):
-        sum += (point2[dimension] - point1[dimension]) ** 2
-
-    distance = math.sqrt(sum)
-    return distance
-
-
-def calculate_distances(dataframe, centers):
-    distances = pd.DataFrame()
-
-    for id, _ in enumerate(centers.iterrows()):
-        distances[f"center{id}"] = ''
-        for row, _ in enumerate(dataframe.iterrows()):
-            distances.loc[row, f"center{id}"] = euclidean_distance(
-                dataframe.to_numpy()[row, :2], centers.to_numpy()[id])
-
-
-    #print("distances:", distances)
-
-    return distances
-
-
-def assign_centers(dataframe, distance_matrix):
-    dataframe["center"] = distance_matrix.idxmin(axis=1)
-
-    return dataframe
+        axis.set(xlim=[-limit, limit], ylim=[-limit, limit])
+        axis.scatter(points["PC1"][point_index:(point_index + self.no_of_points)],
+                     points["PC2"][point_index:point_index + self.no_of_points],
+                     c=points["center"][point_index:(point_index + self.no_of_points)].map(colors))
+        axis.scatter(centers["x"][center_index:(center_index + self.no_of_clusters)],
+                     centers["y"][center_index:(center_index + self.no_of_clusters)], marker="*", c="black")
+
+
+        def update_kMmeans_animation(frame):
+            point_index = self.no_of_points * frame
+            center_index = self.no_of_clusters * frame
+            plt.cla()
+            axis.set(xlim=[-limit, limit], ylim=[-limit, limit])
+            axis.scatter(points["PC1"][point_index:(point_index + self.no_of_points)],
+                         points["PC2"][point_index:point_index + self.no_of_points],
+                         c=points["center"][point_index:(point_index + self.no_of_points)].map(colors))
+            axis.scatter(centers["x"][center_index:(center_index + self.no_of_clusters)],
+                         centers["y"][center_index:(center_index + self.no_of_clusters)], c="black", marker="*")
+
+        anim = ani.FuncAnimation(fig=figure, func=update_kMmeans_animation, frames=no_of_frames, interval=500,
+                                 repeat=False)
+        anim.save(filename="../static/videos/kmeans.mp4", fps=2)
+
+        plt.close()
+
+    def calculate_centers(self, data, first_assignment=False, no_of_clusters=2, centers=np.array([])):
+        min_x = min(data["PC1"])
+        max_x = max(data["PC1"])
+        min_y = min(data["PC2"])
+        max_y = max(data["PC2"])
+
+        new_centers = []
+        if first_assignment:
+            for i in range(no_of_clusters):
+                center = (random.uniform(min_x, max_x), random.uniform(min_y, max_y))
+                new_centers.append(center)
+        else:
+            for i, _ in enumerate(centers):
+
+                center = f"center{i}"
+
+                means = data[data["center"] == center].mean(numeric_only=True)
+
+                if not np.isnan(means.to_numpy()).any():
+                    new_centers.append(means.to_numpy())
+                else:
+                    new_centers.append(centers[i])
+
+        new_centers = pd.DataFrame(new_centers, columns=["x", "y"])
+
+        return new_centers
+
+    def euclidean_distance(self, point1, point2):
+        sum = 0
+        for dimension, _ in enumerate(point1):
+            sum += (point2[dimension] - point1[dimension]) ** 2
+
+        distance = math.sqrt(sum)
+        return distance
+
+    def calculate_distances(self, dataframe, centers):
+        distances = pd.DataFrame()
+
+        for id, _ in enumerate(centers.iterrows()):
+            distances[f"center{id}"] = ''
+            for row, _ in enumerate(dataframe.iterrows()):
+                distances.loc[row, f"center{id}"] = self.euclidean_distance(
+                    dataframe.to_numpy()[row, :2], centers.to_numpy()[id])
+
+        return distances
+
+    def assign_centers(self, dataframe, distance_matrix):
+        dataframe["center"] = distance_matrix.idxmin(axis=1)
+
+        return dataframe
 
 
 if __name__ == "__main__":
-    #dataframe = pd.read_csv("../../datasets/iris/iris.data")
-
-    kMeans(3)
+    kMeans = kMeans(axis_limit=10, no_of_clusters=10, no_of_points=500)
+    kMeans.kMeans_compute()
+    kMeans.animate_kMeans()

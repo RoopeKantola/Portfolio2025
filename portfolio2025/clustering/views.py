@@ -5,7 +5,7 @@ from .algorithms.kMeans import kMeans
 
 # Create your views here.
 def home(response):
-    projects = Project.objects.all()
+    projects = Project.objects.filter(subject="clustering")
     print(projects)
 
     context = {
@@ -17,12 +17,9 @@ def home(response):
 
 def index(response, id):
     project = Project.objects.get(id=id)
-    graph = kMeans(7)
-    print(project)
 
     context = {
         "project": project,
-        "graph": graph,
     }
 
     return render(response, "clustering/index.html", context=context)

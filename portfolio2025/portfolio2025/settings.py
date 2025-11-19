@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'swarm.apps.SwarmConfig',
     'clustering.apps.ClusteringConfig',
-    'classification.apps.ClassificationConfig',
 ]
 
 MIDDLEWARE = [

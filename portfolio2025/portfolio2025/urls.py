@@ -23,5 +23,4 @@ urlpatterns = [
     path('', include("main.urls")),
     path('swarm/', include("swarm.urls")),
     path('clustering/', include('clustering.urls')),
-    path('classification/', include('classification.urls')),
 ]

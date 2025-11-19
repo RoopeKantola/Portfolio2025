@@ -1,29 +1,35 @@
 {% extends "main/base.html" %}
 
+{% load static %}
 
 {% block content %}
-<p id="red">This is from the home.html file</p>
+
+<link rel="stylesheet" href="{% static 'css/clustering/style.css' %}">
+
+<p class="red_text_here">This is from the home.html file</p>
 <p class="text-primary">This is the blue text</p>
 
-    <div class="row">
+<div>
+      <ul class="cards">
         {% for n in projects %}
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                  <p>{{n.name}}</p>
-                <div class="card-body">
-                  <p class="card-text">{{n.description}}</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-outline-secondary"><a href={{n.id}}>Select</a></button>
-                    </div>
-                    <small class="text-muted">example text</small>
+          <li>
+            <a href="{{n.id}}" class="card">
+              <img src="{% static n.image %}" class="card__image" alt="" />
+              <div class="card__overlay">
+                <div class="card__header">
+                  <svg class="card__arc" xmlns="http://www.w3.org/2000/svg"><path /></svg>
+                  <div class="card__header-text">
+                    <h3 class="card__title">{{n.name}}</h3>
                   </div>
                 </div>
+                <p class="card__description">{{n.description}}</p>
               </div>
-            </div>
+            </a>
+          </li>
 
         {% endfor %}
+      </ul>
+</div>
 
-        </div>
-      </div>
+
 {% endblock %}
