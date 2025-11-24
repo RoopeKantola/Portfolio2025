@@ -1,0 +1,45 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+{% if project.layout_type == 1 %}
+<div>
+    <H1>{{project.name}}</H1>
+    <p>{{project.description_1}}</p>
+    <p>{{project.layout_type}}</p>
+    <div>
+        <video width="720" height="480" controls>
+            <source src='{% static project.animation_url_1 %}' type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+{% elif project.layout_type == 2 %}
+<div>
+    <H1>{{project.name}}</H1>
+    <p>{{project.description_1}}</p>
+    <p>{{project.layout_type}}</p>
+    <div>
+        <video width="720" height="480" controls>
+            <source src='{% static project.animation_url_1 %}' type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <video width="720" height="480" controls>
+            <source src='{% static project.animation_url_2 %}' type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+{% else %}
+<div>
+    <H1>{{project.name}}</H1>
+    <p>{{project.layout_type}}</p>
+    <p>
+        Unknown layout type!
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}

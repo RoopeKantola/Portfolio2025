@@ -110,7 +110,7 @@ class SimulatedAnnealing():
 def plot_convergence(Graph, best_length_history):
     print("Plotting convergence...")
     fig, ax = plt.subplots()
-    ax.set_title(f"\nGA convergence")
+    ax.set_title(f"\nSimulated annealing convergence")
     ax.set_xlabel("Iteration")
     ax.set_ylabel("Tour length")
     ax.set_xlim(0, len(best_length_history))

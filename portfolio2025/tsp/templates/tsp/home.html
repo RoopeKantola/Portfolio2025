@@ -1,0 +1,35 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/swarm/style.css' %}">
+
+<p class="red_text">This is from the home.html file</p>
+<p class="text-primary">This is the blue text</p>
+
+<div>
+      <ul class="cards">
+        {% for n in projects %}
+          <li>
+            <a href="{{n.id}}" class="card">
+              <img src="{% static n.image_1 %}" class="card__image" alt="" />
+              <div class="card__overlay">
+                <div class="card__header">
+                  <svg class="card__arc" xmlns="http://www.w3.org/2000/svg"><path /></svg>
+                  <div class="card__header-text">
+                    <h3 class="card__title">{{n.name}}</h3>
+                  </div>
+                </div>
+                <p class="card__description">{{n.description_1}}</p>
+              </div>
+            </a>
+          </li>
+
+        {% endfor %}
+      </ul>
+</div>
+
+
+{% endblock %}

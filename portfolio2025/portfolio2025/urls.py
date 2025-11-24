@@ -21,6 +21,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("main.urls")),
-    path('swarm/', include("swarm.urls")),
+    path('tsp/', include("tsp.urls")),
     path('clustering/', include('clustering.urls')),
+    path('other/', include('other.urls'))
 ]

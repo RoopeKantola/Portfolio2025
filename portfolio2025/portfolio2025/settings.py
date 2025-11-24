@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
-    'swarm.apps.SwarmConfig',
+    'tsp.apps.TspConfig',
     'clustering.apps.ClusteringConfig',
+    'other.apps.OtherConfig',
 ]
 
 MIDDLEWARE = [

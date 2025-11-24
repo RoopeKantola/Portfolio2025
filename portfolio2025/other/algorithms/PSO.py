@@ -305,7 +305,7 @@ class Optimizer:
                     points_to_draw[j] = axis.scatter(x, y, c=colors[swarm_name])
 
         anim = ani.FuncAnimation(fig=figure, func=update_banana, frames=self.iterations, interval=500, repeat=False)
-        anim.save(filename="../static/videos/pso_banana_video_file.mp4", fps=8)
+        anim.save(filename="../../tsp/static/videos/pso_banana_video_file.mp4", fps=8)
         video = anim.to_html5_video()
         plt.close()
         return video
