@@ -9,6 +9,12 @@ class Project(models.Model):
     description_2 = models.TextField(max_length=10000, blank=True)
     description_3 = models.TextField(max_length=10000, blank=True)
     description_4 = models.TextField(max_length=10000, blank=True)
+    description_5 = models.TextField(max_length=10000, blank=True)
+    description_6 = models.TextField(max_length=10000, blank=True)
+    description_7 = models.TextField(max_length=10000, blank=True)
+    description_8 = models.TextField(max_length=10000, blank=True)
+    description_9 = models.TextField(max_length=10000, blank=True)
+    description_10 = models.TextField(max_length=10000, blank=True)
 
     image_1 = models.CharField(max_length=200, null=True, blank=False)
     subject = models.CharField(max_length=100, default="Non specific")

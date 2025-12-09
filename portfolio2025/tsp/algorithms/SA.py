@@ -116,12 +116,15 @@ def plot_convergence(Graph, best_length_history):
     ax.set_xlim(0, len(best_length_history))
     ax.set_ylim(0, max(best_length_history) * 1.1)
 
-    (best_line,) = ax.plot([], [], label="Best tour length", color="blue")
+    (best_line,) = ax.plot([], [], label=f"Best tour length: {best_length_history[0]:.0f}", color="blue")
     ax.legend()
 
     def update(frame):
         best_line.set_data(range(frame), best_length_history[:frame])
-        return (best_line,)
+        best_line.set_label(f"Best tour length: {best_length_history[frame]:.0f}")
+        ax.legend([best_line],
+                  [best_line.get_label()])
+        return best_line,
 
     ani = FuncAnimation(fig, update, frames=len(best_length_history), interval=5, blit=True)
     plt.tight_layout()

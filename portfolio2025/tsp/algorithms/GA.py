@@ -153,13 +153,17 @@ class GeneticAlgorithm():
         ax.set_xlim(0, len(self.best_length_history))
         ax.set_ylim(0, max(self.average_length_history) * 1.1)
 
-        (best_line,) = ax.plot([], [], label="Best tour length", color="blue")
-        (avg_line,) = ax.plot([], [], label="Average tour length", color="orange", alpha=0.7)
+        (best_line,) = ax.plot([], [], label=f"Best tour length: {self.best_length_history[0]:.0f}", color="blue")
+        (avg_line,) = ax.plot([], [], label=f"Average tour length: {self.average_length_history[0]:.0f}", color="orange", alpha=0.7)
         ax.legend()
 
         def update(frame):
             best_line.set_data(range(frame), self.best_length_history[:frame])
             avg_line.set_data(range(frame), self.average_length_history[:frame])
+            best_line.set_label(f"Best tour length: {self.best_length_history[frame]:.0f}")
+            avg_line.set_label(f"Average tour length: {self.average_length_history[frame]:.0f}")
+            ax.legend([best_line, avg_line],
+                      [best_line.get_label(), avg_line.get_label()])
             return best_line, avg_line
 
         ani = FuncAnimation(fig, update, frames=len(self.best_length_history), interval=100, blit=True)

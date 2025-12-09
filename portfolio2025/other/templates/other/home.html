@@ -1,35 +1,34 @@
-{% extends "main/base.html" %}
 
 {% load static %}
 
 {% block content %}
-
-<link rel="stylesheet" href="{% static 'css/swarm/style.css' %}">
-
+<section class="page-section">
+<h1>Other projects</h1>
+<br>
 <p class="red_text">This is from the home.html file</p>
 <p class="text-primary">This is the blue text</p>
 
-<div>
-      <ul class="cards">
-        {% for n in projects %}
-          <li>
-            <a href="{{n.id}}" class="card">
-              <img src="{% static n.image_1 %}" class="card__image" alt="" />
-              <div class="card__overlay">
-                <div class="card__header">
-                  <svg class="card__arc" xmlns="http://www.w3.org/2000/svg"><path /></svg>
-                  <div class="card__header-text">
-                    <h3 class="card__title">{{n.name}}</h3>
-                  </div>
-                </div>
-                <p class="card__description">{{n.description_1}}</p>
-              </div>
-            </a>
-          </li>
+<div class="other-list">
+    <h2 class="other-list-title">Demonstrations</h2>
 
+    <ul class="other-project-list">
+        {% for n in projects %}
+        <li class="other-project-item">
+            <a href="#other-{{ n.id }}" data-target="other-{{n.id}}" class="other-project-link">
+                {% if n.image_1 %}
+                <img src="{% static n.image_1 %}" alt="{{ n.name }}" class="other-thumb">
+                {% endif %}
+                <div class="other-text-block">
+                    <span class="other-name">{{ n.name }}</span>
+                    <span class="other-desc">{{ n.description_1 }}</span>
+                </div>
+            </a>
+        </li>
         {% endfor %}
-      </ul>
+    </ul>
 </div>
 
+
+</section>
 
 {% endblock %}

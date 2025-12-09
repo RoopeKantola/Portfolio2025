@@ -1,35 +1,39 @@
-{% extends "main/base.html" %}
 
 {% load static %}
 
 {% block content %}
+<section class="page-section">
+<h1>Clustering</h1>
+<br>
+<p>Clustering is an unsupervised machine learning technique. In clustering the goal is to divide a set of data points
+into clusters or groups with some clustering algorithm. As mentioned, clustering is unsupervised, which means that we don't have access to
+the ground truth labels for the data points during training the model or running the clustering algorithm.</p>
+<p>There are many ways to approach the problem of clustering data points into groups. The choice of approach can depend on the application.
+    Some common approaches are hierarchical, centroid based and density based clustering algorithms. Hierarchical clustering algorithms start
+    either with one large cluster and divide it into smaller clusters based on some rule, or they start with each data point in their own cluster
+and combine clusters until all data points are in one cluster or the desired number of clusters have been reached. Centroid based clustering like
+    k-means clustering use centroids around which the clusters are formed. Density based clustering algorithms like DBSCAN detect areas where data
+points are densely packed and uses the density to determine which data point belongs into which cluster.</p>
 
-<link rel="stylesheet" href="{% static 'css/clustering/style.css' %}">
+<div class="clustering-list">
+    <h2 class="clustering-list-title">Clustering demonstrations</h2>
 
-<p class="red_text_here">This is from the home.html file</p>
-<p class="text-primary">This is the blue text</p>
-
-<div>
-      <ul class="cards">
+    <ul class="clustering-project-list">
         {% for n in projects %}
-          <li>
-            <a href="{{n.id}}" class="card">
-              <img src="{% static n.image %}" class="card__image" alt="" />
-              <div class="card__overlay">
-                <div class="card__header">
-                  <svg class="card__arc" xmlns="http://www.w3.org/2000/svg"><path /></svg>
-                  <div class="card__header-text">
-                    <h3 class="card__title">{{n.name}}</h3>
-                  </div>
+        <li class="clustering-project-item">
+            <a href="#clustering-{{ n.id }}" data-target="clustering-{{n.id}}" class="clustering-project-link">
+                {% if n.image_1 %}
+                <img src="{% static n.image_1 %}" alt="{{ n.name }}" class="clustering-thumb">
+                {% endif %}
+                <div class="clustering-text-block">
+                    <span class="clustering-name">{{ n.name }}</span>
+                    <span class="clustering-desc">{{ n.description_1 }}</span>
                 </div>
-                <p class="card__description">{{n.description}}</p>
-              </div>
             </a>
-          </li>
-
+        </li>
         {% endfor %}
-      </ul>
+    </ul>
 </div>
 
-
+</section>
 {% endblock %}

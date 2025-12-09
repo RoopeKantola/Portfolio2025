@@ -122,7 +122,7 @@ class AntColony():
             if i % self.print_frequency == 0 and self.print_iterations:
                 print(f'Iteration number {i}, best length: {self.best_length}.')
 
-        return self.best_tour, self.best_length, self.average_length_history
+        return self.best_tour, self.best_length, self.average_length_history, self.best_length_history
 
     def plot_best_lengths(self):
 
@@ -133,16 +133,20 @@ class AntColony():
         ax.set_xlim(0, len(self.best_length_history))
         ax.set_ylim(0, max(self.average_length_history)*1.1)
 
-        (best_line, ) = ax.plot([], [], label="Best tour length", color="blue")
-        (avg_line, ) = ax.plot([], [], label="Average tour length", color="orange", alpha=0.7)
+        (best_line, ) = ax.plot([], [], label=f"Best tour length: {self.best_length_history[0]:.0f}", color="blue")
+        (avg_line, ) = ax.plot([], [], label=f"Average tour length: {self.average_length_history[0]:.0f}", color="orange", alpha=0.7)
         ax.legend()
 
         def update(frame):
             best_line.set_data(range(frame), self.best_length_history[:frame])
             avg_line.set_data(range(frame), self.average_length_history[:frame])
+            best_line.set_label(f"Best tour length: {self.best_length_history[frame]:.0f}")
+            avg_line.set_label(f"Average tour length: {self.average_length_history[frame]:.0f}")
+            ax.legend([best_line, avg_line],
+                      [best_line.get_label(), avg_line.get_label()])
             return best_line, avg_line
 
-        ani = FuncAnimation(fig, update, frames=len(self.best_length_history), interval=100, blit=True)
+        ani = FuncAnimation(fig, update, frames=len(self.best_length_history), interval=100, blit=False)
         plt.tight_layout()
         ani.save(f"../static/videos/ACO_lines_{self.Graph.name}.mp4", writer="ffmpeg", fps=30, dpi=200)
 
@@ -229,8 +233,8 @@ if __name__ == "__main__":
         G.name = file_name
         print(file_name)
 
-        test_suite = {"alpha": [1, 2, 3],
-                      "beta": [2, 3, 4],
+        test_suite = {"alpha": [1, 2],
+                      "beta": [2, 3],
                       "rho": [0.1, 0.2, 0.3]}
         results = {}
         i = 1
@@ -240,11 +244,11 @@ if __name__ == "__main__":
                     print(i)
                     i+=1
                     current_setup = (alpha, beta, rho)
-                    aco = AntColony(Graph=G, number_of_ants=50,
+                    aco = AntColony(Graph=G, number_of_ants=100,
                                     iterations=150,
                                     alpha=alpha, beta=beta, rho=rho,
                                     print_iterations=False, print_frequency=50)
-                    best_tour, best_length, average_length_history = aco.construct_all_tours()
+                    best_tour, best_length, average_length_history, best_length_history = aco.construct_all_tours()
                     avg_length = np.mean(average_length_history[-1])
 
                     results[current_setup] = {"total": best_length + avg_length, "best": best_length, "avg": avg_length}
@@ -299,11 +303,11 @@ if __name__ == "__main__":
         best_best = np.inf
         best_avg = np.inf
         for i in range(10):
-            aco = AntColony(Graph=G, number_of_ants=100,
-                            iterations=300,
+            aco = AntColony(Graph=G, number_of_ants=200,
+                            iterations=150,
                             alpha=best_setup[0], beta=best_setup[1], rho=best_setup[2],
                             print_iterations=True, print_frequency=20)
-            best_tour, best_length, average_length_history = aco.construct_all_tours()
+            best_tour, best_length, average_length_history, best_length_history = aco.construct_all_tours()
             avg_length = np.mean(average_length_history[-1])
             print(f"{i}: best_length: {best_length}")
             if best_length < best_best:

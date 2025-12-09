@@ -1,35 +1,45 @@
-{% extends "main/base.html" %}
 
 {% load static %}
 
 {% block content %}
+<section class="page-section">
+    <h1>Traveling salesman problem</h1>
+    <br>
 
-<link rel="stylesheet" href="{% static 'css/swarm/style.css' %}">
 
-<p class="red_text">This is from the home.html file</p>
-<p class="text-primary">This is the blue text</p>
 
-<div>
-      <ul class="cards">
-        {% for n in projects %}
-          <li>
-            <a href="{{n.id}}" class="card">
-              <img src="{% static n.image_1 %}" class="card__image" alt="" />
-              <div class="card__overlay">
-                <div class="card__header">
-                  <svg class="card__arc" xmlns="http://www.w3.org/2000/svg"><path /></svg>
-                  <div class="card__header-text">
-                    <h3 class="card__title">{{n.name}}</h3>
-                  </div>
-                </div>
-                <p class="card__description">{{n.description_1}}</p>
-              </div>
-            </a>
-          </li>
+    <p class="red_text">There are different versions of TSP but there core problem stays the same.
+      The problem is to find the shortest path or tour through all the given points or cities as they are often called.
+      The traveling salesman problem is a proven NP-complete problem. My demos show the closed TSP variant, in 2d space, which
+      requires that the last city in the tour is the same as the first city.
+    </p>
+    <p>
+      Many algorithms have been adapted and invented to solve different versions of the TSP. Here I showcase some popular ways to
+      arrive at a good solutions to the problem even though none of them guarantee an optimal solution or even a good solution in fact.
+      They are used because they are faster than the algorithms that guarantee the optimal solution for any give instance of the TSP.
+    </p>
 
-        {% endfor %}
-      </ul>
-</div>
+    <div class="tsp-list">
+        <h2 class="tsp-list-title">TSP Demonstrations</h2>
+
+        <ul class="tsp-project-list">
+            {% for n in projects %}
+            <li class="tsp-project-item">
+                <a href="#tsp-{{ n.id }}" data-target="tsp-{{n.id}}" class="tsp-project-link">
+                    {% if n.image_1 %}
+                    <img src="{% static n.image_1 %}" alt="{{ n.name }}" class="tsp-thumb">
+                    {% endif %}
+                    <div class="tsp-text-block">
+                        <span class="tsp-name">{{ n.name }}</span>
+                        <span class="tsp-desc">{{ n.description_1 }}</span>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</section>
 
 
 {% endblock %}
