@@ -1,192 +1,196 @@
-// longpage.js (updated for nav-group submenu handling)
+
 document.addEventListener('DOMContentLoaded', () => {
+    const mainSections = document.querySelectorAll(".page-section[id]");
+    console.log("mainSections:", mainSections);
+    const subSections = document.querySelectorAll("[class$=-demo-block]");
+    console.log("subSections: ", subSections);
+    const listLinks = document.querySelectorAll("[class$=-project-link]");
+    console.log("projectLink: ", listLinks)
 
-  const menuToggle = document.getElementById('menu-toggle');
-  const nav = document.getElementById('primary-nav');
+    const allSections = [
+    ...mainSections,
+    ...subSections
+    ];
 
-  if (!menuToggle || !nav) return;
+    allSections.sort((a, b) => {
+        if (a === b) return 0;
 
-  function setMenuOpen(open) {
-    nav.classList.toggle('open', open);
-    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    // optionally prevent body scroll when menu open
-    document.body.style.overflow = open ? 'hidden' : '';
-  }
+        const position = a.compareDocumentPosition(b);
 
-  menuToggle.addEventListener('click', (e) => {
-    e.preventDefault();
-    setMenuOpen(!nav.classList.contains('open'));
-  });
-
-  // Close the menu when a nav link is clicked (mobile UX)
-  nav.addEventListener('click', (e) => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    // only close on small screens
-    if (window.innerWidth <= 900) {
-      setMenuOpen(false);
-    }
-  });
-
-  // Close menu on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setMenuOpen(false);
-  });
-
-  const navParents = document.querySelectorAll('.sidenav .parent');            // parent links
-  const navGroups = document.querySelectorAll('.sidenav .nav-group');         // containers
-  const submenuItems = document.querySelectorAll('.sidenav .submenu a');      // submenu links
-  const allHashLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
-  const sections = Array.from(document.querySelectorAll('.page-section'));
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // helper: normalize id
-  const normalizeId = s => s ? s.replace(/^#/, '') : '';
-
-  // Remove all active/expanded states
-  const clearNavState = () => {
-    navParents.forEach(p => p.classList.remove('active'));
-    navGroups.forEach(g => g.classList.remove('expanded'));
-    submenuItems.forEach(si => si.classList.remove('active'));
-  };
-
-  // Expand a nav-group for sectionId (e.g., 'tsp')
-  function expandGroupFor(sectionId) {
-    // clear first
-    navParents.forEach(p => p.classList.remove('active'));
-    navGroups.forEach(g => g.classList.remove('expanded'));
-    submenuItems.forEach(si => si.classList.remove('active'));
-
-    // find the group
-    const group = document.querySelector(`.sidenav .nav-group[data-section="${sectionId}"]`);
-    if (group) {
-      group.classList.add('expanded');
-      // mark the parent link active
-      const parent = group.querySelector('.parent');
-      if (parent) parent.classList.add('active');
-    }
-  }
-
-  // Mark a submenu item active (and ensure its parent group is expanded)
-  function setActiveDemo(fullId) {
-    // fullId = 'tsp-12' or 'clustering-5'
-    const parts = fullId.split('-');
-    const parentSection = parts[0];
-    expandGroupFor(parentSection);
-
-    // mark submenu item
-    const submenuLink = document.querySelector(`.sidenav .submenu a[data-target="${fullId}"]`);
-    if (submenuLink) submenuLink.classList.add('active');
-  }
-
-  // Smooth scroll helper
-  function smoothScrollToId(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (prefersReducedMotion) {
-      el.scrollIntoView({ behavior: 'auto', block: 'start' });
-      history.replaceState(null, '', `#${id}`);
-      return;
-    }
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // update URL after small delay to avoid browser jump
-    setTimeout(() => history.pushState(null, '', `#${id}`), 200);
-  }
-
-  // Parent click: toggle or activate & scroll
-  navParents.forEach(parent => {
-    parent.addEventListener('click', (e) => {
-      e.preventDefault();
-      const sectionId = normalizeId(parent.dataset.target || parent.getAttribute('href'));
-
-      const parentGroup = parent.closest('.nav-group');
-      if (!parentGroup) {
-        // if no group, just scroll and set active
-        expandGroupFor(sectionId);
-        smoothScrollToId(sectionId);
-        return;
-      }
-
-      // otherwise expand and scroll
-      expandGroupFor(sectionId);
-      smoothScrollToId(sectionId);
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+            return -1;
+        } else {
+            return 1;
+        }
     });
-  });
 
-  // Submenu link clicks (cards / demo list links)
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    const href = a.getAttribute('href');
-    if (!href || href === '#') return;
-    const id = normalizeId(href);
-    if (!document.getElementById(id)) return; // outside-page anchor -> ignore
+    const ACTIVATION_THRESHOLD = 120; //pixels from the top of the screen
 
-    e.preventDefault();
-    // set active demo (expands group + mark submenu item)
-    setActiveDemo(id);
-    smoothScrollToId(id);
-  }, { passive: false });
+    function activateOnScroll() {
+        //Reset active and expanded
+        navGroups.forEach(group => {
+            group.classList.remove('expanded');
+            group.querySelector('.parent')?.classList.remove('active');
+        });
 
+        subLinks.forEach(link => {
+            link.classList.remove('active');
+        });
 
-// SECTION OBSERVER: detects top-level sections (home, tsp, clustering, other)
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      if (!id) return;
-      // Activate / expand the parent group immediately when section top reaches activation zone
-      expandGroupFor(id);
-      history.replaceState(null, '', `#${id}`);
+        let active = null;
+
+        allSections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+
+            if (rect.top <= ACTIVATION_THRESHOLD && rect.bottom > ACTIVATION_THRESHOLD) {
+                active = section;
+            }
+        })
+
+        if (!active) return
+
+        let activeMain = null;
+        let activeSub = null;
+
+        if (active.dataset.type === 'main') {
+          activeMain = active;
+          const group = document.querySelector(`.nav-group[data-section="${activeMain.id}"]`);
+          group.classList.add("expanded")
+          const parentLink = group.querySelector('.parent');
+          parentLink.classList.add('active');
+        }
+
+        if (active.dataset.type === 'sub') {
+          activeMain = document.getElementById(active.dataset.parent);
+          const group = document.querySelector(`.nav-group[data-section="${activeMain.id}"]`);
+          group.classList.add("expanded")
+          const parentLink = group.querySelector('.parent');
+          parentLink.classList.add('active');
+
+          activeSub = active;
+          const subLink = document.querySelector(`.submenu a[data-target="${activeSub.id}"]`);
+          subLink.classList.add('active');
+        }
+
+        if (activeMain) {
+            console.log('MAIN:', activeMain.id);
+        }
+        if (activeSub) {
+            console.log('SUB:', activeSub.id);
+        }
     }
-  });
-}, {
-  root: null,
-  threshold: 0, // trigger as soon as any part intersects the rootMargin box
-  // rootMargin pushes the activation point down (40% from top)
-  rootMargin: '-40% 0px -60% 0px'
-});
+    //Scroll listener activates sections based on the what is in view
+    window.addEventListener('scroll', activateOnScroll);
 
-// DEMO OBSERVER: detects demo blocks inside sections and marks submenu items active
-const demoObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      if (!id) return;
-      // If demo block (contains a '-'), mark demo active
-      if (id.indexOf('-') !== -1) {
-        setActiveDemo(id); // expands parent and marks submenu item
-        history.replaceState(null, '', `#${id}`);
+    const navGroups = document.querySelectorAll('.nav-group');
+    console.log("Navgroups", navGroups)
+    const parentLinks = document.querySelectorAll('.nav-group .parent');
+    const subLinks = document.querySelectorAll('.submenu a');
+
+    //Reset active and expanded
+    navGroups.forEach(group => {
+        group.classList.remove('expanded');
+        group.querySelector('.parent')?.classList.remove('active');
+    });
+
+    subLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+
+    //Click handler for main section links
+    parentLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const id = link.dataset.target;
+            const target = document.getElementById(id);
+
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            history.replaceState(null, '', `#${id}`)
+        });
+    });
+
+    //Click handler for subsection links
+    subLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const id = link.dataset.target;
+            const target = document.getElementById(id);
+
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            history.replaceState(null, '', `#${id}`)
+        });
+    });
+
+    //Click handler for list links
+    listLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const id = link.dataset.target;
+            const target = document.getElementById(id);
+
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            history.replaceState(null, '', `#${id}`)
+        });
+    });
+
+    const sidenav = document.querySelector('.sidenav');
+    const menuToggle = document.getElementById('menu-toggle');
+
+    const MOBILE_BREAKPOINT = 900;
+
+    function isMobile() {
+      return window.innerWidth <= MOBILE_BREAKPOINT;
+    }
+
+    menuToggle?.addEventListener('click', () => {
+      sidenav.classList.toggle('open');
+    });
+
+    function closeMenuIfMobile() {
+      if (isMobile()) {
+        sidenav.classList.remove('open');
       }
     }
-  });
-}, {
-  root: null,
-  threshold: [0.05, 0.25], // small fraction visible
-  rootMargin: '0px 0px -60% 0px'
+
+    //Close menu after click for small screens
+    parentLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenuIfMobile();
+      });
+    });
+
+    subLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenuIfMobile();
+      });
+    });
+
+    // Close menu when resizing from mobile → desktop
+    window.addEventListener('resize', () => {
+      if (!isMobile()) {
+        sidenav.classList.remove('open');
+      }
+    });
+
+
+
+
+
+
+
 });
 
-// Observe everything
-document.querySelectorAll('.page-section').forEach(s => sectionObserver.observe(s));
 
-// Observe demo blocks explicitly (class names you used earlier)
-document.querySelectorAll('.tsp-demo-block, .clustering-demo-block, .other-demo-block')
-  .forEach(el => demoObserver.observe(el));
 
-  // On load, if there's a hash, scroll to it
-  if (window.location.hash) {
-    const id = normalizeId(window.location.hash);
-    // if id is a demo (has '-') set active demo; if top-level, expand that group
-    if (id.includes('-')) setActiveDemo(id);
-    else expandGroupFor(id);
-    setTimeout(() => smoothScrollToId(id), 100);
-  }
-
-  // handle hashchange
-  window.addEventListener('hashchange', () => {
-    const id = normalizeId(location.hash);
-    if (!id) return;
-    if (id.includes('-')) setActiveDemo(id);
-    else expandGroupFor(id);
-  });
-});
