@@ -88,7 +88,7 @@ DATABASES = {
         'USER': 'roopekantola',
         'PASSWORD': os.getenv("MYSQL_PASSWORD"),
         'HOST': 'roopekantola.mysql.pythonanywhere-services.com',
-        'PORT': '3307'
+        'PORT': '3306'
     },
 
 }
