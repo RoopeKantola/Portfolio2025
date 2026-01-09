@@ -1,8 +1,5 @@
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation as ani
-plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
-plt.rcParams['axes.titlesize'] = 'medium'
+
 
 # Setting of random seed for repeatability
 np.random.seed(300)
@@ -232,6 +229,12 @@ class Optimizer:
     '''
 
     def animate_schwefel(self, title):
+        from matplotlib import pyplot as plt
+        from matplotlib import animation as ani
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+        plt.rcParams['axes.titlesize'] = 'medium'
+
+
         colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
         figure, axis = plt.subplots(subplot_kw={"projection": "3d"})
         axis.set(xlim=[-self.axis_limit, self.axis_limit], ylim=[-self.axis_limit, self.axis_limit],
@@ -275,6 +278,12 @@ class Optimizer:
         '''
 
     def animate_banana(self, title):
+        from matplotlib import pyplot as plt
+        from matplotlib import animation as ani
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+        plt.rcParams['axes.titlesize'] = 'medium'
+
+
         colors = ['r', 'g', 'b', 'c', 'm']
         figure, axis = plt.subplots()
         axis.set(xlim=[-self.axis_limit, self.axis_limit], ylim=[-self.axis_limit, self.axis_limit])

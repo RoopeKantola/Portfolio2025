@@ -2,12 +2,9 @@
 
 import networkx as nx
 import numpy.random
-from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation
 import numpy as np
 import ast
 
-plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
 
 
 np.random.seed(999)
@@ -125,6 +122,9 @@ class AntColony():
         return self.best_tour, self.best_length, self.average_length_history, self.best_length_history
 
     def plot_best_lengths(self):
+        from matplotlib import pyplot as plt
+        from matplotlib.animation import FuncAnimation
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
 
         fig, ax = plt.subplots()
         ax.set_title(f"\nACO convergence\nalpha: {self.alpha}, beta: {self.beta}, rho: {self.rho}")
@@ -151,6 +151,10 @@ class AntColony():
         ani.save(f"../static/videos/ACO_lines_{self.Graph.name}.mp4", writer="ffmpeg", fps=30, dpi=200)
 
     def plot_pheromone_graph(self):
+        from matplotlib import pyplot as plt
+        from matplotlib.animation import FuncAnimation
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+
         fig, ax = plt.subplots(figsize=(8, 6))
         ax.set_title(f"\nPheromone intensity\nalpha: {self.alpha}, beta: {self.beta}, rho: {self.rho}")
         pos = nx.get_node_attributes(G, 'pos')
@@ -274,6 +278,10 @@ if __name__ == "__main__":
 
 
         def plot_results():
+            from matplotlib import pyplot as plt
+            from matplotlib.animation import FuncAnimation
+            plt.rcParams[
+                'animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
 
             fig, ax = plt.subplots()
             ax.set_title("Test suite results")

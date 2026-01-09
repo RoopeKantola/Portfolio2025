@@ -1,12 +1,8 @@
 
 import networkx as nx
 import numpy.random
-from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation
 import numpy as np
 import ast
-
-plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
 
 np.random.seed(999)
 
@@ -145,6 +141,10 @@ class GeneticAlgorithm():
         return self.best_length, self.best_tour
 
     def plot_convergence(self):
+        from matplotlib import pyplot as plt
+        from matplotlib.animation import FuncAnimation
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+
         print("Plotting convergence...")
         fig, ax = plt.subplots()
         ax.set_title(f"\nGA convergence")
@@ -172,6 +172,10 @@ class GeneticAlgorithm():
         print("Animation saved.")
 
     def plot_best_tour(self):
+        from matplotlib import pyplot as plt
+        from matplotlib.animation import FuncAnimation
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+
         print("Plotting best tour...")
         fig, ax = plt.subplots(figsize=(8, 6))
         ax.set_title(f"\nBest tour development")

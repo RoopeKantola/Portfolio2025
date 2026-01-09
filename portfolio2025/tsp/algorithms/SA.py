@@ -1,11 +1,8 @@
 # Simulated annealing for TSP
 import networkx as nx
-from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation
 import numpy as np
 import ast
 
-plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
 
 np.random.seed(999)
 
@@ -108,6 +105,10 @@ class SimulatedAnnealing():
         return self.best_length, self.best_tour, self.best_length_history, self.best_tour_history
 
 def plot_convergence(Graph, best_length_history):
+    from matplotlib import pyplot as plt
+    from matplotlib.animation import FuncAnimation
+    plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+
     print("Plotting convergence...")
     fig, ax = plt.subplots()
     ax.set_title(f"\nSimulated annealing convergence")
@@ -132,6 +133,10 @@ def plot_convergence(Graph, best_length_history):
     print("Animation saved.")
 
 def plot_best_tour(Graph, best_tour_history):
+    from matplotlib import pyplot as plt
+    from matplotlib.animation import FuncAnimation
+    plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+
     print("Plotting best tour...")
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title(f"\nBest tour development")

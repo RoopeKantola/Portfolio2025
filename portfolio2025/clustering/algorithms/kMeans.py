@@ -1,17 +1,7 @@
 import math
 import random
-
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation as ani
-
-from sklearn.datasets import make_blobs
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-
-plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
-plt.rcParams['axes.titlesize'] = 'medium'
 
 random.seed(12)
 
@@ -24,6 +14,9 @@ class kMeans:
         self.iter = 0
 
     def kMeans_compute(self):
+        from sklearn.datasets import make_blobs
+        from sklearn.decomposition import PCA
+        from sklearn.preprocessing import StandardScaler
 
         random_cluster_centers = []
         for i in range(self.no_of_clusters):
@@ -90,6 +83,11 @@ class kMeans:
         centers_file.close()
 
     def animate_kMeans(self):
+        from matplotlib import pyplot as plt
+        from matplotlib import animation as ani
+        plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
+        plt.rcParams['axes.titlesize'] = 'medium'
+
 
         point_index = 0
         center_index = 0
