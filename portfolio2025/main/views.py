@@ -18,3 +18,4 @@ def base(response):
     print(projects)
     return render(response, "main/base.html", context=context)
 
+
