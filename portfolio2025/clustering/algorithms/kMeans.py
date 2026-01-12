@@ -1,7 +1,6 @@
 import math
 import random
-import pandas as pd
-import numpy as np
+
 
 random.seed(12)
 
@@ -14,6 +13,9 @@ class kMeans:
         self.iter = 0
 
     def kMeans_compute(self):
+        import pandas as pd
+        import numpy as np
+
         from sklearn.datasets import make_blobs
         from sklearn.decomposition import PCA
         from sklearn.preprocessing import StandardScaler
@@ -83,6 +85,9 @@ class kMeans:
         centers_file.close()
 
     def animate_kMeans(self):
+        import pandas as pd
+        import numpy as np
+
         from matplotlib import pyplot as plt
         from matplotlib import animation as ani
         plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
@@ -132,7 +137,10 @@ class kMeans:
 
         plt.close()
 
-    def calculate_centers(self, data, first_assignment=False, no_of_clusters=2, centers=np.array([])):
+    def calculate_centers(self, data, first_assignment=False, no_of_clusters=2, centers=[]):
+        import pandas as pd
+        import numpy as np
+
         min_x = min(data["PC1"])
         max_x = max(data["PC1"])
         min_y = min(data["PC2"])
@@ -168,6 +176,9 @@ class kMeans:
         return distance
 
     def calculate_distances(self, dataframe, centers):
+        import pandas as pd
+        import numpy as np
+
         distances = pd.DataFrame()
 
         for id, _ in enumerate(centers.iterrows()):

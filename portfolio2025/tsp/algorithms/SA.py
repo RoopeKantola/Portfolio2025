@@ -1,5 +1,5 @@
 # Simulated annealing for TSP
-import networkx as nx
+
 import numpy as np
 import ast
 
@@ -133,6 +133,8 @@ def plot_convergence(Graph, best_length_history):
     print("Animation saved.")
 
 def plot_best_tour(Graph, best_tour_history):
+    import networkx as nx
+
     from matplotlib import pyplot as plt
     from matplotlib.animation import FuncAnimation
     plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
@@ -187,6 +189,7 @@ def plot_best_tour(Graph, best_tour_history):
     print("Animation saved.")
 
 if __name__ == "__main__":
+    import networkx as nx
 
     '''
     Problem and optimal solution data set up 

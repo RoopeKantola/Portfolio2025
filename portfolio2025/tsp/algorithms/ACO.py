@@ -1,6 +1,6 @@
 # Ant colony optimization algorithm
 
-import networkx as nx
+
 import numpy.random
 import numpy as np
 import ast
@@ -151,6 +151,8 @@ class AntColony():
         ani.save(f"../static/videos/ACO_lines_{self.Graph.name}.mp4", writer="ffmpeg", fps=30, dpi=200)
 
     def plot_pheromone_graph(self):
+        import networkx as nx
+
         from matplotlib import pyplot as plt
         from matplotlib.animation import FuncAnimation
         plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
@@ -193,7 +195,7 @@ class AntColony():
 
 
 if __name__ == "__main__":
-
+    import networkx as nx
     '''
     Problem and optimal solution data set up 
     '''

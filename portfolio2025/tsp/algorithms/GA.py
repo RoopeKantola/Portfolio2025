@@ -1,5 +1,5 @@
 
-import networkx as nx
+
 import numpy.random
 import numpy as np
 import ast
@@ -172,6 +172,8 @@ class GeneticAlgorithm():
         print("Animation saved.")
 
     def plot_best_tour(self):
+        import networkx as nx
+
         from matplotlib import pyplot as plt
         from matplotlib.animation import FuncAnimation
         plt.rcParams['animation.ffmpeg_path'] = r'C:\Users\roope\Ohjelmat\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe'
@@ -227,7 +229,7 @@ class GeneticAlgorithm():
 
 
 if __name__ == "__main__":
-
+    import networkx as nx
     '''
     Problem and optimal solution data set up 
     '''
