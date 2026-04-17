@@ -59,15 +59,15 @@ class kMeans:
 
         max_iter = 30
 
-        points_file = open("../static/data/points_file.txt", "w")
+        points_file = open("../static/data/kMeans/points_file.txt", "w")
         points_file.write(transformed_data.to_csv())
         points_file.close()
-        points_file = open("../static/data/points_file.txt", "a")
+        points_file = open("../static/data/kMeans/points_file.txt", "a")
 
-        centers_file = open("../static/data/centers_file.txt", "w")
+        centers_file = open("../static/data/kMeans/centers_file.txt", "w")
         centers_file.write(centers.to_csv())
         centers_file.close()
-        centers_file = open("../static/data/centers_file.txt", "a")
+        centers_file = open("../static/data/kMeans/centers_file.txt", "a")
 
         while not np.array_equal(centers.to_numpy(), previous_centers.to_numpy()) and self.iter < max_iter:
             self.iter += 1
@@ -97,8 +97,8 @@ class kMeans:
         point_index = 0
         center_index = 0
 
-        points = pd.read_csv("../static/data/points_file.txt", index_col=0)
-        centers = pd.read_csv("../static/data/centers_file.txt", index_col=0)
+        points = pd.read_csv("../static/data/kMeans/points_file.txt", index_col=0)
+        centers = pd.read_csv("../static/data/kMeans/centers_file.txt", index_col=0)
 
         limit = max([max([max(points["PC1"]),abs(min(points["PC1"]))]),
                        max([max(points["PC2"]), abs(min(points["PC2"]))]),

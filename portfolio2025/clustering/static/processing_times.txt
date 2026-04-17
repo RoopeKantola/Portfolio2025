@@ -1,0 +1,17 @@
+Processing times
+
+Unbalanced dataset
+
+random swap: 470ms
+
+k-means (100 iterations): 4700ms
+
+
+a3 dataset
+
+random swap: 19400ms
+
+k-means (100 iterations): 28600ms
+
+
+
