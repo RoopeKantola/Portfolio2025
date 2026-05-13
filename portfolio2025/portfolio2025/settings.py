@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR.parent / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,11 +27,14 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = 'django-insecure-6&=!$51ev52((d^7x%54)p%j_wm)5!$qq43mfxby011ni4ydtr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+print(f"RAW DEBUG={os.getenv('DEBUG')}")
+print(f"DEBUG={DEBUG}")
 
-ALLOWED_HOSTS = [
-    'roopekantola.pythonanywhere.com',
-]
+if os.getenv("USE_SQLITE", "True") == "True":
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+else:
+    ALLOWED_HOSTS = ['roopekantola.pythonanywhere.com']
 
 
 # Application definition
@@ -83,17 +86,28 @@ WSGI_APPLICATION = 'portfolio2025.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'roopekantola$portfolioDB',
-        'USER': 'roopekantola',
-        'PASSWORD': os.getenv("MYSQL_PASSWORD"),
-        'HOST': 'roopekantola.mysql.pythonanywhere-services.com',
-        'PORT': '3306'
-    },
+print(f'RAW SQLITE={os.getenv("USE_SQLITE")}')
 
-}
+if os.getenv("USE_SQLITE", "True") == "True":
+    # Local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+else:
+    # Production (PythonAnywhere)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'roopekantola$portfolioDB',
+            'USER': 'roopekantola',
+            'PASSWORD': os.getenv("MYSQL_PASSWORD"),
+            'HOST': 'roopekantola.mysql.pythonanywhere-services.com',
+            'PORT': '3306'
+        }
+    }
 
 
 # Password validation
@@ -137,6 +151,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+print("BASE_DIR:", BASE_DIR)
+print("STATIC DIR:", os.path.join(BASE_DIR, 'static'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

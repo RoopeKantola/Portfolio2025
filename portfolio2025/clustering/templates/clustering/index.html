@@ -23,6 +23,14 @@
     <br>
     <p>{{project.description_1 | linebreaksbr}}</p>
     <br>
+    {% if project.desc_image_1 %}
+    <img src="{% static project.desc_image_1 %}" alt="{{ project.title }}" class="clustering-image">
+    {% endif %}
+    <br>
+    {% if project.desc_image_2 %}
+    <img src="{% static project.desc_image_2 %}" alt="{{ project.title }}" class="clustering-image">
+    {% endif %}
+
     <div>
         <div class="video-wrap">
             <video controls playsinline preload="metadata">
@@ -59,6 +67,67 @@
             </video>
         </div>
         <br>
+        <br>
+    </div>
+</div>
+    {% elif project.layout_type == 3 %}
+<div>
+    <H1>{{project.name}}</H1>
+    <br>
+    <p>{{project.description_1 | linebreaksbr}}</p>
+    <br>
+    {% if project.desc_image_1 %}
+    <img src="{% static project.desc_image_1 %}" alt="{{ project.title }}" class="clustering-image">
+    {% endif %}
+    <br>
+    <p>{{project.description_2 | linebreaksbr}}</p>
+    <br>
+    {% if project.desc_image_2 %}
+    <img src="{% static project.desc_image_2 %}" alt="{{ project.title }}" class="clustering-image">
+    {% endif %}
+    <p>{{project.description_3 | linebreaksbr}}</p>
+    <br>
+    <div>
+        <div class="video-wrap">
+            <video controls playsinline preload="metadata">
+                <source src='{% static project.animation_url_1 %}' type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <br>
+        <br>
+        <p>{{project.description_4 | linebreaksbr}}</p>
+        <div class="video-wrap">
+            <video controls playsinline preload="metadata">
+                <source src='{% static project.animation_url_2 %}' type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <br>
+        {% if project.description_5 %}
+        <br>
+        <p>{{project.description_5 | linebreaksbr}}</p>
+        <br>
+
+        <div class="video-wrap">
+            <video controls playsinline preload="metadata">
+                <source src='{% static project.animation_url_3 %}' type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        {% endif %}
+        <br>
+        {% if project.description_6 %}
+        <br>
+        <p>{{project.description_6 | linebreaksbr}}</p>
+        <div class="video-wrap">
+            <video controls playsinline preload="metadata">
+                <source src='{% static project.animation_url_4 %}' type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <br>
+        {% endif %}
         <br>
     </div>
 </div>

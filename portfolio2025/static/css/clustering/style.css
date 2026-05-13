@@ -84,4 +84,9 @@
     max-height: calc(1.25rem * 2);
 }
 
+.clustering-image {
+    width: 640px;
+    height: 480px;
+}
+
 

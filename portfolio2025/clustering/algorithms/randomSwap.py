@@ -294,24 +294,24 @@ def animate_random_swap(dataset, frames, save_path, k):
 
 
 if __name__ == "__main__":
-    file_path = "../../datasets/clustering/a3.txt"
-    file_name = "a3"
+    file_path = "../../datasets/clustering/unbalance.txt"
+    file_name = "unbalanced"
     #Random swap
-    centroids, dataset, partition, sse_value, history, processing_time_milliseconds = random_swap_kMeans(txt_data=file_path, k=50, iterations_per_kMeans=2, max_swaps=430)
+    centroids, dataset, partition, sse_value, history, processing_time_milliseconds = random_swap_kMeans(txt_data=file_path, k=8, iterations_per_kMeans=2, max_swaps=70)
     df, centers_df = format_data_for_vis(dataset, centroids, partition)
     write_final_state(df, centers_df)
     plot_final_state(df, centers_df, partition=partition, save_to_file=False, file_name=f"random_swap_"
-                                                                                        f"{file_name}", title="Random swap", k=50)
+                                                                                        f"{file_name}", title="Random swap", k=8)
 
     print(f"milliseconds for random swap: {processing_time_milliseconds}")
 
     print(len(history))
     print(history[0].keys())
     frames = build_animation_frames(dataset, history)
-    animate_random_swap(dataset, frames, f"../../static/videos/random_swap_{file_name}.mp4", k=50)
+    #animate_random_swap(dataset, frames, f"../../static/videos/random_swap_{file_name}.mp4", k=50)
 
     #normal k-means
-    centroids, dataset, partition, processing_time_milliseconds = kMeans(file_path, 50)
+    centroids, dataset, partition, processing_time_milliseconds = kMeans(file_path, 8)
     print(f"milliseconds for k-means: {processing_time_milliseconds}")
     df, centers_df = format_data_for_vis(dataset, centroids, partition)
-    plot_final_state(df, centers_df, partition=partition, save_to_file=False, file_name=f"kMeans_{file_name}", title="K-means", k=50)
+    plot_final_state(df, centers_df, partition=partition, save_to_file=False, file_name=f"kMeans_{file_name}", title="K-means", k=8)
