@@ -28,8 +28,6 @@ SECRET_KEY = 'django-insecure-6&=!$51ev52((d^7x%54)p%j_wm)5!$qq43mfxby011ni4ydtr
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-print(f"RAW DEBUG={os.getenv('DEBUG')}")
-print(f"DEBUG={DEBUG}")
 
 if os.getenv("USE_SQLITE", "True") == "True":
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
@@ -85,8 +83,6 @@ WSGI_APPLICATION = 'portfolio2025.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-print(f'RAW SQLITE={os.getenv("USE_SQLITE")}')
 
 if os.getenv("USE_SQLITE", "True") == "True":
     # Local development
@@ -151,9 +147,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
-print("BASE_DIR:", BASE_DIR)
-print("STATIC DIR:", os.path.join(BASE_DIR, 'static'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
